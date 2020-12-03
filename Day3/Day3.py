@@ -1,5 +1,3 @@
-import math
-
 def moveToboggan(right,down):
     file = open("input.txt", "r").read().splitlines()
     d = 0
