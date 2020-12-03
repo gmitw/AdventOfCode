@@ -21,6 +21,5 @@ def main():
     answer = one * two * three * four * five
     print(answer)
 
-
 if __name__ == "__main__":
     main()
