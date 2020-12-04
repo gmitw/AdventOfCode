@@ -19,9 +19,12 @@ for i in filtered_list:
         forms = re.split('[\n ]', i)
         for form in forms:
             d = form.split(":")
+            
             if "iyr" in d[0] and 2010 <= int(d[1]) <= 2020:
-                print("yes")
+                pass
+            
     except:
+        print("exception")
 
 openfile.close()
 
