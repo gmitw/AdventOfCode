@@ -1,4 +1,4 @@
-batfile = open("input.bat","r").read().split("\n\n")
+batfile = open("input.txt","r").read().split("\n\n")
 
 filters = ["byr","iyr","eyr","hgt","hcl","ecl","pid"]
 
