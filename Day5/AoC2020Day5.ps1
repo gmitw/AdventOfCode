@@ -3,14 +3,13 @@ function Get-SeatLocation {
     param (
         [Parameter(Mandatory)]
         [String]
-        $BinarySpace
+        $BoardingPass
     )
-    $boardingPass = $BinarySpace.ToCharArray()
     $maxRow = 127
     $minRow = 0
     $leftCol = 0
     $rightCol = 7
-    foreach ($c in $boardingPass) {
+    foreach ($c in $BoardingPass.ToCharArray()) {
         switch ($c) {
             'F' {
                 $maxRow-= (($minRow..$maxRow).count/2)
@@ -26,17 +25,17 @@ function Get-SeatLocation {
             }
         }
     }
-    $property = [hashtable] @{}
-    $property.Add('Row',$minRow)
-    $property.Add('Col',$leftCol)
-    $sID = ($minRow * 8) + $leftCol
-    $property.Add('SeatId',[int] $sID)
-    $myObj = New-Object -TypeName psobject -Property $property
+    $myProperties = [hashtable] @{}
+    $myProperties.Add('Row',$minRow)
+    $myProperties.Add('Col',$leftCol)
+    $seatID = ($minRow * 8) + $leftCol
+    $myProperties.Add('SeatId',[int] $seatID)
+    $myObj = New-Object -TypeName psobject -Property $myProperties
     return $myObj
 }
     
 $boardingPasses = Get-Content -Path .\input.txt
-$locations = $boardingPasses | ForEach-Object { Get-SeatLocation -BinarySpace $_ }
+$locations = $boardingPasses | ForEach-Object { Get-SeatLocation -BoardingPass $_ }
 $maxSeatID = ($locations | Sort-Object SeatId | Select-Object -Last 1).SeatID
 $minSeatID = ($locations | Sort-Object SeatId | Select-Object -First 1).SeatID
 
