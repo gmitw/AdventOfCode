@@ -1,6 +1,28 @@
 $declarationForms = Get-Content .\input.txt -Delimiter "$([Environment]::NewLine)$([Environment]::NewLine)"
-$sum=0
+$sumAny=0
+$sumAll=0
 foreach ($form in $declarationForms) {
-    $sum += ($form.ToCharArray() | Where-Object {$_ -match "[a-z]"} |  Select-Object -Unique).count
+    $sumAny += ($form.ToCharArray() | Where-Object {$_ -match "[a-z]"} |  Select-Object -Unique).count
+    $group = $form.Split("`n") | Where-Object {$_ -match "[a-z]"}
+    foreach ($char in 97..122) {
+        $hasChar =0
+        foreach ($passenger in $group) {
+            if  ($passenger -match [char] $char) {
+                $hasChar ++
+            }
+        }
+        if ($hasChar -eq $group.count) {
+            $sumAll++
+        } 
+        # else {
+        #     Write-Host "Failed Group ---------"
+        #     "HasChar: $hasChar"
+        #     "GroupCount: $($group.count)"
+        #     $group
+        #     Write-Host "EndFailed Group------"
+        # }
+    }
 }
-$sum
+"Any: $sumAny"
+"All: $sumAll"
+
