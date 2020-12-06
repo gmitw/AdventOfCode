@@ -14,15 +14,7 @@ foreach ($form in $declarationForms) {
         if ($hasChar -eq $group.count) {
             $sumAll++
         } 
-        # else {
-        #     Write-Host "Failed Group ---------"
-        #     "HasChar: $hasChar"
-        #     "GroupCount: $($group.count)"
-        #     $group
-        #     Write-Host "EndFailed Group------"
-        # }
     }
 }
 "Any: $sumAny"
 "All: $sumAll"
-
