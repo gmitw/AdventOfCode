@@ -12,7 +12,7 @@ function Get-ValidPassport {
         $Passport
     )
     # $requirements = @("byr:","iyr:","eyr:","hgt:","hcl:","ecl:","pid:") # exclude "cid:" to allow north pole ID"
-    $requirements = @("byr:(\d{4})\s+","iyr:(\d{4})\s+", "eyr:(\d{4})\s+","hgt:(\d{2,3})(cm|in)", "hcl:#([a-f]|[0-9]){6}" ,"ecl:(amb|blu|brn|gry|grn|hzl|oth)", "pid:([0-9]){9}")
+    $requirements = @("byr:(\d{4})\s+","iyr:(\d{4})\s+", "eyr:(\d{4})\s+","hgt:(\d{2,3})(cm|in)", "hcl:#([a-f]|[0-9]){6}\s+" ,"ecl:(amb|blu|brn|gry|grn|hzl|oth)", "pid:([0-9]){9}\s+")
     $myParameter = [hashtable] @{}
     foreach ($req in $requirements) {
         if ($Passport -match $req) {
