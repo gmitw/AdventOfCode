@@ -52,16 +52,48 @@ $ruleObjects = foreach ($rule in $rules) {
   Get-RuleObject -rule $rule
 }
 $ruleObjects.count
-$sum=0
-$paths=1
-foreach ($TopLevelBag in $ruleObjects.TopLevelBag) {
-Clear-Host
-"There are $($ruleObjects.count) Rule Objects"
-"Paths to Shiny Gold Bag: $sum"
-"Paths checked: $paths"
-  if (Get-PathToShinyGold -TopLevelBag $TopLevelBag) {
-    $sum++
+# $sum=0
+# $paths=1
+# foreach ($TopLevelBag in $ruleObjects.TopLevelBag) {
+# Clear-Host
+# "There are $($ruleObjects.count) Rule Objects"
+# "Paths to Shiny Gold Bag: $sum"
+# "Paths checked: $paths"
+#   if (Get-PathToShinyGold -TopLevelBag $TopLevelBag) {
+#     $sum++
+#   }
+#   $paths++
+# }
+# "Done!"
+
+[System.Collections.ArrayList] $bags = @{}
+# [void] $bags.Add("shiny gold bag")
+$nextLevel = @("shiny gold bag")
+$iteration=1
+do {
+# foreach ($i in 1..5) {
+
+  Clear-Host
+  Write-Host "Iteration: $iteration"
+  ($bags | where { $_ -ne "shiny gold bag" } | select-object -Unique).count
+ $bags.count
+  $iteration++
+  $nextLevel = foreach ($bag in $nextLevel) { 
+
+    ($ruleObjects | Where-Object { $_.Containedbags.Color -contains $bag } | Select-Object -Unique TopLevelBag).TopLevelBag | Where-Object { $bags -notcontains $_}
+
+  } 
+  Write-Host $nextLevel.count
+
+  foreach ($bag in $nextLevel) {
+    if ($bags -notcontains $bag) {
+      [void]$bags.Add($bag)
+    }
   }
-  $paths++
-}
+# Clear-Host
+} until ($null -eq $nextLevel)
 "Done!"
+$bags.count
+($bags | where {$_ -ne "shiny gold bag"} | select-object -Unique).count
+
+# $bags
