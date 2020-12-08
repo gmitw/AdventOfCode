@@ -9,10 +9,10 @@ function Get-RuleObject {
   $subLevelList = $subLevel.Split(",") 
 
   $myProperty= [hashtable]@{}
-  if ($topLevelBag -match "^((?:\w*\s)*?bag)") {
-    $myProperty.Add("TopLevelBag", $Matches[0])
+  if ($topLevelBag -match "^((?:\w*\s)*?)bag") {
+    $myProperty.Add("TopLevelBag", $Matches[1])
     $containedBags = foreach ($bagType in $subLevelList) {
-      if($bagType -match "(\d+)\s((?:\w*\s)*?bag)") {
+      if ($bagType -match "(\d+)\s((?:\w*\s)*?)bag") {
 
         $mySubProperty = [hashtable] @{}
         $mySubProperty.Add("Quantity",$Matches[1])
@@ -32,68 +32,59 @@ function Get-PathToShinyGold {
   param (
       [Parameter()]
       [String]
-      $TopLevelBag
+      $TopLevelBag,
+      [Parameter()]
+      [psobject]
+      $ruleObjects
   )
   $colors = $ruleObjects | Where-Object TopLevelBag -eq $TopLevelBag | Select-Object -ExpandProperty ContainedBags | Select-Object Color
+  # Write-Host "$TopLevelBag Contains"
+  # Write-Host $colors 
+
+
   if ($null -eq $colors) {
     return $false
-  } elseif ($colors.Color.trim() -contains "shiny gold bag"){
+  } elseif ($colors.Color.trim() -contains "shiny gold"){
     return $true
-  } else {
-    foreach ($color in $colors.Color.trim()) {
-      return Get-PathToShinyGold -TopLevelBag $color
-    }
-  }
+  } 
+  # else {
+  #   foreach ($color in $colors.Color) {
+  #     if (Get-PathToShinyGold -TopLevelBag $color -ruleObjects $ruleObjects) {
+  #       return $true
+  #     }
+  #   }
+    return $false
+  # }
 }
 
-$rules = Get-Content .\rules.txt
+function  Get-UpperLevel {
+  [CmdletBinding()]
+  param (
+      [Parameter()]
+      [String]
+      $Color
+  )
+  $UpperLevel = $ruleObjects | Where-OBject { $_.ContainedBags.Color -match $Color }
+}
 
+$rules = Get-Content -path rules.txt
 $ruleObjects = foreach ($rule in $rules) {
   Get-RuleObject -rule $rule
 }
-$ruleObjects.count
+$ruleObjects | Where-OBject {$_.ContainedBags.Color -match "striped gold"}
+
+
 # $sum=0
-# $paths=1
-# foreach ($TopLevelBag in $ruleObjects.TopLevelBag) {
-# Clear-Host
-# "There are $($ruleObjects.count) Rule Objects"
-# "Paths to Shiny Gold Bag: $sum"
-# "Paths checked: $paths"
-#   if (Get-PathToShinyGold -TopLevelBag $TopLevelBag) {
+# $ruleNum=1
+# foreach ($rule in $ruleObjects) {
+#   Clear-Host
+#   "There are $($ruleObjects.count) rules."
+#   "Checking rule: $ruleNum"
+#   $ruleNum++
+#   "Paths to Shiny Gold: $sum"
+#   $hasPath = Get-PathToShinyGold -TopLevelBag $rule.TopLevelBag -ruleObjects $ruleObjects
+#   if ($hasPath){
 #     $sum++
 #   }
-#   $paths++
 # }
-# "Done!"
 
-[System.Collections.ArrayList] $bags = @{}
-# [void] $bags.Add("shiny gold bag")
-$nextLevel = @("shiny gold bag")
-$iteration=1
-do {
-# foreach ($i in 1..5) {
-
-  Clear-Host
-  Write-Host "Iteration: $iteration"
-  ($bags | where { $_ -ne "shiny gold bag" } | select-object -Unique).count
- $bags.count
-  $iteration++
-  $nextLevel = foreach ($bag in $nextLevel) { 
-
-    ($ruleObjects | Where-Object { $_.Containedbags.Color -contains $bag } | Select-Object -Unique TopLevelBag).TopLevelBag | Where-Object { $bags -notcontains $_}
-
-  } 
-  Write-Host $nextLevel.count
-
-  foreach ($bag in $nextLevel) {
-    if ($bags -notcontains $bag) {
-      [void]$bags.Add($bag)
-    }
-  }
-# Clear-Host
-} until ($null -eq $nextLevel)
-"Done!"
-$bags.count
-($bags | where {$_ -ne "shiny gold bag"} | select-object -Unique).count
-
-# $bags
